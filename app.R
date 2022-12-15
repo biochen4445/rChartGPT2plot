@@ -7,33 +7,33 @@
 #    http://shiny.rstudio.com/
 #
 
-library(shiny)
+
 #install.packages(c("devtools", "openai"))
-
 #library(devtools)
-
 #install_github("biochen4445/gptchatteR")
 
 ### Quickstart ###
 
+library(shiny)
 library(gptchatteR)
 
+#輸入API key
 chatter.auth("your ChatGPT API Key")
 
+#呼叫功能
 chatter.create()
-
 
 # Define UI for application that draws a histogram
 ui <- fluidPage(
 
     # Application title
-    titlePanel("iHi 海�?�哥"),
+    titlePanel("海豚哥"),
 
     # Sidebar with a slider input for number of bins 
     sidebarLayout(
         sidebarPanel(
-            textInput( "index1",label = "??��??") ,
-            actionButton("goButton", "??��??"),
+            textInput( "index1",label = "輸入問題(例如: plot of rt and group using ggplot with df") ,
+            actionButton("goButton", "發問"),
         ),
 
         # Show a plot of the generated distribution
@@ -51,32 +51,35 @@ server <- function(input, output) {
     input$goButton,{
       index2 <- as.character(input$index1)
       
+      #顯示問題
       output$question <- renderText({
-        paste("你�?��?��?�是:",index2)
+        paste("你的問題是:",index2)
       })
       
+      #產生答案
       output$answer <- renderPrint({
         chatter.chat(index2)
       })
       
+     #產生圖檔
      output$plot <- renderPlot({
-       # Create a test data frame
+       # 建立資料集
        library(tidyverse)
-       rt <- rnorm(1000, mean=700, sd=100) # Generate RT data
+       rt <- rnorm(1000, mean=700, sd=100)
        df <- tibble(RT = rt, group = rep(c("low", "high"), each=500))
        
-       # Feed the data frame information to the chat session
+       # 把資料集餵入ChatGPT
        chatter.feed("I have a dataframe df")
        
-       # Use the chatter.plot function to create a histogram
+       # 取得返回值並畫圖
        cp <- chatter.plot(index2)
        
-       # View the plot
+       # 顯示圖
        cp$plot
        
       })
   })
 }
 
-# Run the application 
+# 執行Shiny程式
 shinyApp(ui = ui, server = server)
