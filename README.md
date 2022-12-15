@@ -1,0 +1,2 @@
+# rChartGPT2plot
+這是一個利用ChatGPT幫你用R畫圖的小工具
